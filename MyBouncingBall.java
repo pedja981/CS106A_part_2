@@ -24,7 +24,7 @@ public class MyBouncingBall extends GraphicsProgram {
 	private double xVEL = X_VEL;
 	private double yVEL = 0.0;
 	/* private instance variable */
-	private GOval ball;
+	private GOval ball; 
    
 	public void run () {
 		/* method for creating the ball object */
