@@ -7,6 +7,7 @@
 import acm.program.*; 
 import acm.graphics.*; 
 import acm.util.*;
+
 import java.awt.*;
 
 public class MyDrawingRandomCircles extends GraphicsProgram {
@@ -19,7 +20,7 @@ public class MyDrawingRandomCircles extends GraphicsProgram {
 	private static final double MAX_RADIUS = 50.0;
 	/* We need to have pause time in order to achieve
 	 * the impression of animation for the human eye */
-	private static final int PAUSE_TIME = 50;
+	private static final int PAUSE_TIME = 100;
 	
 	
 	public void run() {
@@ -28,34 +29,41 @@ public class MyDrawingRandomCircles extends GraphicsProgram {
 		}
 	}
 	
-	
-	
-	
+		
 	/* I have used top-down design - add the methods needed,
 	 * and write them after that */
-	
-	
-	
+		
 	/* Method for drawing the circle with random: 
 	 * fill color, radius, position.
 	 * Condition: Circle must fit into canvas */
 	private void drawRandomCircle() {
-		/* I feel uncomfortable with dealing with the
-		 * first condition - we must try creating the circles,
-		 * for each 10, and keep trying until the condition
-		 * is satisfied. So, I would use the "loop and a half"*/
-		while (true) {
-			setupCircle();
-			if (circleInCanvas()) {
-				addRandomCircle();
-				break;
-			}
-		}
+		setupCircle();
+		pause(PAUSE_TIME);
 	}
 	
+	/** Method for setting up a circle - defining it, but without adding */
+	private void setupCircle() {
+		/* we are generating the diameter */
+		double diam = rgen.nextDouble(MIN_RADIUS*2, MAX_RADIUS*2);
+		/* Defining the position of the circle in a way that it fits into canvas 
+		 * and generating the random position x, y */
+		double x_position = rgen.nextDouble(diam, getWidth()-diam);
+		double y_position = rgen.nextDouble(diam, getHeight()-diam);		
+		/* Generating the circle with parameters above */ 
+		GOval random_circle = new GOval(x_position, y_position, diam, diam);
+		/* Generating custom color. We must declare the same color
+		 * for outside borderline of the circle and filling of the circle */
+		
+		random_circle.setFilled(true);
+		Color random_color = rgen.nextColor();
+		random_circle.setColor(random_color);
+		random_circle.setFillColor(random_color);
+		
+		/* Finally, adding the circle to the canvas */
+		add(random_circle);
+	}
 	
-	
-	
-	
-	
+	/* Private instance variables  for random generating*/
+	private RandomGenerator rgen =
+			RandomGenerator.getInstance();
 }
