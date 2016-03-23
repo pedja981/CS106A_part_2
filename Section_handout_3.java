@@ -47,13 +47,14 @@ public class MyDrawingRandomCircles extends GraphicsProgram {
 		 * first condition - we must try creating the circles,
 		 * for each 10, and keep trying until the condition
 		 * is satisfied. So, I would use the "loop and a half"*/
-		while (true) {
+	//	while (true) {
 			setupCircle();
-			if (circleInCanvas()) {
-				addRandomCircle();
-				break;
-			}
-		}
+		//	if (circleInCanvas()) {
+				//add(random_circle);
+				pause(PAUSE_TIME);
+			//	break;
+			//}
+	//	}
 	}
 	
 	/** Method for setting up a circle - defining it, but without adding */
@@ -67,8 +68,8 @@ public class MyDrawingRandomCircles extends GraphicsProgram {
 		double x_position = rgen.nextInt(0, getWidth());
 		double y_position = rgen.nextInt(0, getHeight());		
 		double diam = rgen.nextDouble(MIN_RADIUS*2, MAX_RADIUS*2); 
-		GOval circle = new GOval(x_position, y_position, diam, diam);
-	
+		GOval random_circle = new GOval(x_position, y_position, diam, diam);
+		add(random_circle);
 	
 	
 	}
