@@ -7,6 +7,7 @@
 import acm.program.*; 
 import acm.graphics.*; 
 import acm.util.*;
+
 import java.awt.*;
 
 public class MyDrawingRandomCircles extends GraphicsProgram {
@@ -20,6 +21,8 @@ public class MyDrawingRandomCircles extends GraphicsProgram {
 	/* We need to have pause time in order to achieve
 	 * the impression of animation for the human eye */
 	private static final int PAUSE_TIME = 50;
+	
+	
 	
 	
 	public void run() {
@@ -53,9 +56,26 @@ public class MyDrawingRandomCircles extends GraphicsProgram {
 		}
 	}
 	
+	/** Method for setting up a circle - defining it, but without adding */
+	private void setupCircle() {
+		/* 
+		 * ball = new GOval(X_START, Y_START, DIAM_BALL, DIAM_BALL);
+		ball.setFilled(true);
+		add(ball);
+		 * */
+		
+		double x_position = rgen.nextInt(0, getWidth());
+		double y_position = rgen.nextInt(0, getHeight());		
+		double diam = rgen.nextDouble(MIN_RADIUS*2, MAX_RADIUS*2); 
+		GOval circle = new GOval(x_position, y_position, diam, diam);
 	
 	
 	
+	}
 	
 	
+	
+	/* Private instance variables  for random generating*/
+	private RandomGenerator rgen =
+			RandomGenerator.getInstance();
 }
