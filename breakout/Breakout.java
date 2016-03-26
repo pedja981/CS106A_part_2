@@ -90,7 +90,8 @@ public class Breakout extends GraphicsProgram {
 	 * objects with starting conditions  */
 	private void setupGame() {
 		createBricks();
-		createPaddle();		
+		createPaddle();	
+		createBall();
 	}
 	
 	/** One of the methods in setup() method. Creates the paddle as GRect object */
@@ -128,12 +129,18 @@ public class Breakout extends GraphicsProgram {
 		} // end of loop for creating bricks
 	}	// end of method for creating bricks
 	
-	
+	private void createBall() {
+		ball = new GOval(BALL_RADIUS*2,BALL_RADIUS*2);
+		ball.setFilled(true);
+		ball.setColor(Color.RED);
+		add(ball, (WIDTH - BALL_RADIUS*2)/2, (HEIGHT-BALL_RADIUS*2)/2);
+	}
+		
 	// Called on mouse press to record the coordinates of the click
-		public void mousePressed(MouseEvent e) {
-			last = new GPoint(e.getPoint());
-			if ((getElementAt(last) != null) && (getElementAt(last) == paddle)) {
-				gobj = getElementAt(last);
+	public void mousePressed(MouseEvent e) {
+		last = new GPoint(e.getPoint());
+		if ((getElementAt(last) != null) && (getElementAt(last) == paddle)) {
+			gobj = getElementAt(last);
 			/*
 			 * When mouse is clicked on paddle, paddle is activated. in order
 			 * to move it in a good fashion, we are first centering the paddle - 
@@ -146,29 +153,42 @@ public class Breakout extends GraphicsProgram {
 			 */
 			
 				// Centering the paddle with the mouse position
-				gobj.setLocation(last.getX()-PADDLE_WIDTH/2, 
-						HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT);
-			}
+			gobj.setLocation(last.getX()-PADDLE_WIDTH/2, 
+					HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT);
 		}
+	}
 	
-		public void mouseMoved(MouseEvent e) {
-			if (gobj != null) {
-			if (last.getX() < PADDLE_WIDTH/2) { gobj.setLocation(1, 
-					HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT);}	
+	public void mouseMoved(MouseEvent e) {
+		if (gobj != null) {
+			gobj.move(e.getX()-last.getX(), 0);
+			pause(PADDLE_DELAY);
+			// we now save the new position of the last
+			last = new GPoint(e.getPoint());			
+		}
+	} 
+	
 		
-			else {	gobj.move(e.getX()-last.getX(), 0);
+		
+		/*public void mouseMoved(MouseEvent e) {
+			if (gobj != null) {
+				if (last.getX() < PADDLE_WIDTH/2) { gobj.setLocation(1, 
+					HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT); 
+				last = new GPoint(e.getPoint());
+				gobj.move(e.getX()-last.getX(), 0);}	
+		
+			else if (last.getX() > PADDLE_WIDTH/2) {	gobj.move(e.getX()-last.getX(), 0);
 					pause(PADDLE_DELAY);
 					// we now save the new position of the last
 					last = new GPoint(e.getPoint());			
 				}
 			}
-		}
+		}*/
 		
-	
+		
 	/* private instance variables */ 
 	private GRect brick;
 	private GRect paddle;
+	private GOval ball;
 	private GObject gobj; /* The object being directed - paddle */
 	private GPoint last; /* The last mouse position */
-	//private GPoint last; /* The last mouse position */
 }
