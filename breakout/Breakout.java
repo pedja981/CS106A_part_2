@@ -125,9 +125,7 @@ public class Breakout extends GraphicsProgram {
 	}	// end of method for creating bricks
 	
 	
-	
-	
-	
+	/* private instance variables */
 	private GRect brick;
 	private GRect paddle;
 }
