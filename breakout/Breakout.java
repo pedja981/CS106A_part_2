@@ -1,9 +1,6 @@
 /*
  * File: Breakout.java
  * -------------------
- * Name:
- * Section Leader:
- * 
  * This file will eventually implement the game of Breakout.
  */
 
@@ -15,17 +12,17 @@
  * 
  */
 		
-		/* paddle - moves with the mouse across x-axis, fixed y-position
-		 * ball is traveling, as in bouncing ball, without gravity
-		 * ball is launched from the center of the screen, with random angle (here the
-		 * question is - to maintain constant speed or not? Vector addition? ) = NO, ONLY
-		 * random vx component
-		 * on collision with brick - ball bounces as of the wall, and brick disappears  
-		 */
+ /* paddle - moves with the mouse across x-axis, fixed y-position
+  * ball is traveling, as in bouncing ball, without gravity
+  * ball is launched from the center of the screen, with random angle (here the
+  * question is - to maintain constant speed or not? Vector addition? ) = NO, ONLY
+  * random vx component
+  * on collision with brick - ball bounces as of the wall, and brick disappears  
+  */
 		
-		/*
-		 * Steps: setup the game
-		 */
+ /*
+  * Steps: setup the game
+  */
 
 
 
