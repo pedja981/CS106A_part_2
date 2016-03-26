@@ -2,7 +2,7 @@
  * File: Breakout.java
  * -------------------
  * This file will eventually implement the game of Breakout.
- */
+ */ 
 
 /*
  * Concept:
