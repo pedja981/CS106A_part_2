@@ -119,7 +119,7 @@ public class Breakout extends GraphicsProgram {
 					case 9: brick.setColor(Color.cyan); break;
 					case 10: brick.setColor(Color.cyan); break;
 				}
-				add(brick);
+				add(brick); 
 			}
 		} // end of loop for creating bricks
 	}	// end of method for creating bricks
