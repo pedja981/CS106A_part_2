@@ -2,7 +2,7 @@
  * File: Breakout.java
  * -------------------
  * This file will eventually implement the game of Breakout.
- */ 
+ */
 
 /*
  * Concept:
@@ -27,6 +27,7 @@
 
 
 import java.awt.Color;
+import java.awt.event.*;
 
 import acm.program.GraphicsProgram;
 import acm.graphics.*;
@@ -79,6 +80,7 @@ public class Breakout extends GraphicsProgram {
 		setupGame();
 		
 		// playGame();
+		addMouseListeners();
 		
 	}
 	
@@ -125,9 +127,62 @@ public class Breakout extends GraphicsProgram {
 	}	// end of method for creating bricks
 	
 	
+	// Called on mouse press to record the coordinates of the click
+	public void mousePressed(MouseEvent e) {
+		last = new GPoint(e.getPoint());
+		gobj = getElementAt(last);
+		//centerPaddle();
+		//gobj.move(, 0);
+		
+		
+		while ((center - last.getX())<=0) {
+			gobj.move(e.getX()-last.getX(), 0);
+			// we now save the new position of the last
+			last = new GPoint(e.getPoint());
+		}
+	}
+	
+	/*public void centerPaddle() {
+		while ((center - last.getX())<=0) {
+			gobj.move(e.getX()-last.getX(), 0);
+			// we now save the new position of the last
+			last = new GPoint(e.getPoint());
+		}
+	}*/
+	
+	public double center() {
+		center = gobj.getX()+PADDLE_WIDTH/2;
+		return center;
+	}
+	
+	public void mouseMoved(MouseEvent e) {
+		if (gobj != null) {
+		if (last.getX() > 0) {	
+		
+				gobj.move(e.getX()-last.getX(), 0);
+				// we now save the new position of the last
+				last = new GPoint(e.getPoint());			
+			}
+		}
+	}
 	
 	
 	
+	/* GPoint last = new GPoint((getWidth()-PADDLE_WIDTH)/2, HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT);
+	public void mouseDragged(MouseEvent e) {
+		if(paddle != null) {
+		last = new GPoint((getWidth()-PADDLE_WIDTH)/2, HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT);
+		paddle.move(e.getX()-last.getX(), 0);
+		last = new GPoint(e.getX(), e.getY());
+		//HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT
+	}} */
+	
+	
+	/* private instance variables */ 
+	private double center;
 	private GRect brick;
 	private GRect paddle;
+	private GObject gobj; /* The object being directed - paddle */
+	private GPoint last; /* The last mouse position */
+	//private GPoint last; /* The last mouse position */
 }
