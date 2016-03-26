@@ -73,6 +73,8 @@ public class Breakout extends GraphicsProgram {
 
 	/** Number of turns */
 	private static final int NTURNS = 3;
+	
+	private static double PADDLE_DELAY = 0.1;
 
 	public void run() {
 		
@@ -128,58 +130,42 @@ public class Breakout extends GraphicsProgram {
 	
 	
 	// Called on mouse press to record the coordinates of the click
-	public void mousePressed(MouseEvent e) {
-		last = new GPoint(e.getPoint());
-		gobj = getElementAt(last);
-		//centerPaddle();
-		//gobj.move(, 0);
-		
-		
-		while ((center - last.getX())<=0) {
-			gobj.move(e.getX()-last.getX(), 0);
-			// we now save the new position of the last
+		public void mousePressed(MouseEvent e) {
 			last = new GPoint(e.getPoint());
-		}
-	}
-	
-	/*public void centerPaddle() {
-		while ((center - last.getX())<=0) {
-			gobj.move(e.getX()-last.getX(), 0);
-			// we now save the new position of the last
-			last = new GPoint(e.getPoint());
-		}
-	}*/
-	
-	public double center() {
-		center = gobj.getX()+PADDLE_WIDTH/2;
-		return center;
-	}
-	
-	public void mouseMoved(MouseEvent e) {
-		if (gobj != null) {
-		if (last.getX() > 0) {	
-		
-				gobj.move(e.getX()-last.getX(), 0);
-				// we now save the new position of the last
-				last = new GPoint(e.getPoint());			
+			if ((getElementAt(last) != null) && (getElementAt(last) == paddle)) {
+				gobj = getElementAt(last);
+			/*
+			 * When mouse is clicked on paddle, paddle is activated. in order
+			 * to move it in a good fashion, we are first centering the paddle - 
+			 * move the paddle so that it's center is matched with x-axis value
+			 * of the mouse position. This also enables us better control over
+			 * "left-right border condition" which says that paddle must not go 
+			 * off the screen. If we try to control this condition using paddle position
+			 * as a parameter, we go into the problems. But if we use last.getX() as 
+			 * that parameter, things are much simpler
+			 */
+			
+				// Centering the paddle with the mouse position
+				gobj.setLocation(last.getX()-PADDLE_WIDTH/2, 
+						HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT);
 			}
 		}
-	}
 	
-	
-	
-	/* GPoint last = new GPoint((getWidth()-PADDLE_WIDTH)/2, HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT);
-	public void mouseDragged(MouseEvent e) {
-		if(paddle != null) {
-		last = new GPoint((getWidth()-PADDLE_WIDTH)/2, HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT);
-		paddle.move(e.getX()-last.getX(), 0);
-		last = new GPoint(e.getX(), e.getY());
-		//HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT
-	}} */
-	
+		public void mouseMoved(MouseEvent e) {
+			if (gobj != null) {
+			if (last.getX() < PADDLE_WIDTH/2) { gobj.setLocation(1, 
+					HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT);}	
+		
+			else {	gobj.move(e.getX()-last.getX(), 0);
+					pause(PADDLE_DELAY);
+					// we now save the new position of the last
+					last = new GPoint(e.getPoint());			
+				}
+			}
+		}
+		
 	
 	/* private instance variables */ 
-	private double center;
 	private GRect brick;
 	private GRect paddle;
 	private GObject gobj; /* The object being directed - paddle */
