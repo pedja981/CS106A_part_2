@@ -2,7 +2,7 @@
  * File: Breakout.java
  * -------------------
  * This file will eventually implement the game of Breakout.
- */ 
+ */
 
 /*
  * Concept:
@@ -27,8 +27,10 @@
 
 
 import java.awt.Color;
+import java.awt.event.*;
 
 import acm.program.GraphicsProgram;
+import acm.util.RandomGenerator;
 import acm.graphics.*;
 
 public class Breakout extends GraphicsProgram {
@@ -68,17 +70,22 @@ public class Breakout extends GraphicsProgram {
 	private static final int BALL_RADIUS = 10;
 
 	/** Offset of the top brick row from the top */
-	private static final int BRICK_Y_OFFSET = 70;
+	private static final int BRICK_Y_OFFSET = 90;
 
 	/** Number of turns */
 	private static final int NTURNS = 3;
-
+	
+	private static double PADDLE_DELAY = 0.1;
+	
+	private static double BALL_DELAY = 15.0;
+	
 	public void run() {
-		
-		
-		setupGame();
-		
-		// playGame();
+		addMouseListeners();
+		addKeyListeners();
+		setupGame();		
+		playGame();
+		//addMouseListeners();
+		//addKeyListeners();
 		
 	}
 	
@@ -86,7 +93,8 @@ public class Breakout extends GraphicsProgram {
 	 * objects with starting conditions  */
 	private void setupGame() {
 		createBricks();
-		createPaddle();		
+		createPaddle();	
+		createBall();
 	}
 	
 	/** One of the methods in setup() method. Creates the paddle as GRect object */
@@ -124,10 +132,151 @@ public class Breakout extends GraphicsProgram {
 		} // end of loop for creating bricks
 	}	// end of method for creating bricks
 	
+	private void createBall() {
+		ball = new GOval(BALL_RADIUS*2,BALL_RADIUS*2);
+		ball.setFilled(true);
+		ball.setColor(Color.RED);
+		add(ball, (WIDTH - BALL_RADIUS*2)/2, (HEIGHT-BALL_RADIUS*2)/2);
+	}
+		
+	// Called on mouse press to record the coordinates of the click
+	public void mousePressed(MouseEvent e) {
+		last = new GPoint(e.getPoint());
+		if ((getElementAt(last) != null) && (getElementAt(last) == paddle)) {
+			gobj = getElementAt(last);
+			/*
+			 * When mouse is clicked on paddle, paddle is activated. in order
+			 * to move it in a good fashion, we are first centering the paddle - 
+			 * move the paddle so that it's center is matched with x-axis value
+			 * of the mouse position. This also enables us better control over
+			 * "left-right border condition" which says that paddle must not go 
+			 * off the screen. If we try to control this condition using paddle position
+			 * as a parameter, we go into the problems. But if we use last.getX() as 
+			 * that parameter, things are much simpler
+			 */
+			
+				// Centering the paddle with the mouse position
+			gobj.setLocation(last.getX()-PADDLE_WIDTH/2, 
+					HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT);
+		}
+	}
 	
+	public void mouseMoved(MouseEvent e) {
+		if (gobj != null) {
+			gobj.move(e.getX()-last.getX(), 0);
+			pause(PADDLE_DELAY);
+			// we now save the new position of the last
+			last = new GPoint(e.getPoint());
+		}
+	} 
+		
+	/*
+	 * LET'S PLAY the Game!
+	 */
+	private void playGame() {
+		initializeBall();
+		while (true) {
+			moveBall();
+		}
+	}
 	
+	/*
+	 * Determine the initial movement of the ball. It is defined by
+	 * the velocity parameters vx and vy. vy is constant, vx varies
+	 */
+	private void initializeBall() {
+		vx = rgen.nextDouble(1.0, 3.0);
+		if (rgen.nextBoolean(0.5)) {
+			vx = -vx;
+		}
+		vy = 3.0;
+	}
 	
+/*	public void keyTurned(KeyEvent e) {
+		//if (ball != null) {
+		while (ball.getX() < WIDTH) {
+			ball.move(vx, vy);
+			pause(BALL_DELAY);
+		}
+		//}
+	}*/
 	
+	private void moveBall() {
+		ball.move(vx, vy);
+		pause(BALL_DELAY);
+		checkForCollision(); 
+	}
+		
+	private void checkForCollision() {
+		collideWithWalls();
+		collideWithBricks();
+		collideWithPaddle();
+	}
+	
+	 private void collideWithWalls() { 
+	      // determine if ball has dropped below the floor 
+		 if (ball.getY() > (HEIGHT - BALL_RADIUS*2)) { 
+	         // change ball's Y velocity to now bounce upwards 
+	         vy = -vy;
+		 }
+		 
+		// check for right side collision
+	      if (ball.getX() > WIDTH - BALL_RADIUS*2) {
+	    	  vx = -vx;
+	      }
+	      
+	      // check for left side collision
+	      if (ball.getX() < 0) {
+	    	  vx = -vx;
+	      }
+	      
+	      // check for top collision
+	      if (ball.getY() < 0) {
+	    	  vy = -vy;
+	      }
+	 }
+		 
+	 private void collideWithBricks() {
+	 collObj = getElementAt(ball.getX(), ball.getY());
+		if ((collObj != paddle) && (collObj != null)) {
+			remove(collObj);
+			vy = -vy;
+		}
+	 }
+	 
+	 private void collideWithPaddle() {
+		 collObj = getElementAt(ball.getX(), ball.getY());
+			if (collObj == paddle) {
+				vy = -vy;
+			}
+		 }
+	 		
+	/* private instance variables */ 
 	private GRect brick;
 	private GRect paddle;
+	private GOval ball;
+	private double vx, vy; /* velocities of the ball in x- and y- direction */
+	private GObject gobj; /* The object being directed - paddle */
+	private GPoint last; /* The last mouse position */
+	private GObject collObj;
+	
+	private RandomGenerator rgen = 
+			RandomGenerator.getInstance();
+
+/* Pokusaj za paddle */ 
+		/*public void mouseMoved(MouseEvent e) {
+			if (gobj != null) {
+				if (last.getX() < PADDLE_WIDTH/2) { gobj.setLocation(1, 
+					HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT); 
+				last = new GPoint(e.getPoint());
+				gobj.move(e.getX()-last.getX(), 0);}	
+		
+			else if (last.getX() > PADDLE_WIDTH/2) {	gobj.move(e.getX()-last.getX(), 0);
+					pause(PADDLE_DELAY);
+					// we now save the new position of the last
+					last = new GPoint(e.getPoint());			
+				}
+			}
+		}*/
+
 }
