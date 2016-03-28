@@ -33,7 +33,7 @@ import acm.program.GraphicsProgram;
 import acm.util.RandomGenerator;
 import acm.graphics.*;
 
-public class Breakout extends GraphicsProgram {
+public class BreakoutVersionOne extends GraphicsProgram {
 
 	/** Width and height of application window in pixels */
 	public static final int APPLICATION_WIDTH = 400;
@@ -67,7 +67,7 @@ public class Breakout extends GraphicsProgram {
 	private static final int BRICK_HEIGHT = 8;
 
 	/** Radius of the ball in pixels */
-	private static final int BALL_RADIUS = 10;
+	private static final int BALL_RADIUS = 5;
 
 	/** Offset of the top brick row from the top */
 	private static final int BRICK_Y_OFFSET = 90;
@@ -237,19 +237,65 @@ public class Breakout extends GraphicsProgram {
 	 }
 		 
 	 private void collideWithBricks() {
-	 collObj = getElementAt(ball.getX(), ball.getY());
-		if ((collObj != paddle) && (collObj != null)) {
-			remove(collObj);
+	 collObj1 = getElementAt(ball.getX(), ball.getY());
+	 collObj2 = getElementAt(ball.getX()+BALL_RADIUS*2, ball.getY());
+	 collObj3 = getElementAt(ball.getX(), ball.getY()+BALL_RADIUS*2);
+	 collObj4 = getElementAt(ball.getX()+BALL_RADIUS*2, ball.getY()+BALL_RADIUS*2);
+		if ((collObj1 != paddle) && (collObj1 != null) && (vy<0)) {
+			remove(collObj1);
+			vy = -vy;
+		}
+		
+		if ((collObj2 != paddle) && (collObj2 != null) && (vy<0)) {
+			remove(collObj2);
+			vy = -vy;
+		}
+		
+		if ((collObj3 != paddle) && (collObj3 != null)&& (vy>0)) {
+			remove(collObj3);
+			vy = -vy;
+		}
+		
+		if ((collObj4 != paddle) && (collObj4 != null)&& (vy>0)) {
+			remove(collObj4);
 			vy = -vy;
 		}
 	 }
 	 
 	 private void collideWithPaddle() {
-		 collObj = getElementAt(ball.getX(), ball.getY());
+		 /*collObj = getElementAt(ball.getX(), ball.getY());
 			if (collObj == paddle) {
 				vy = -vy;
+			}*/
+		
+		collObj3 = getElementAt(ball.getX(), ball.getY()+BALL_RADIUS*2);
+		collObj4 = getElementAt(ball.getX()+BALL_RADIUS*2, ball.getY()+BALL_RADIUS*2);
+	
+		if ((collObj3 == paddle) && (collObj3 != null) && (vy>0)) {
+			vy = -vy;
+			if (((paddle.getX()+PADDLE_WIDTH)-ball.getX())<20 && 
+					((paddle.getX()+PADDLE_WIDTH)-ball.getX())>15) {
+				vx = 0.80*vx;
 			}
-		 }
+			if (((paddle.getX()+PADDLE_WIDTH)-ball.getX())<15 && vx<0) {
+				vx = - 1.05*vx;
+			}
+		}
+		
+		if ((collObj4 == paddle) && (collObj4 != null) && (vy>0)) {
+			vy = -vy;
+			
+			
+			if (((ball.getX()+BALL_RADIUS)-paddle.getX())<20 && 
+					((ball.getX()+BALL_RADIUS)-paddle.getX())>15) {
+				vx = 0.80*vx;
+			}
+			if (((ball.getX()+BALL_RADIUS)-paddle.getX())<15 && vx>0) {
+				vx = - 1.05*vx;
+			}
+		}
+		
+	}
 	 		
 	/* private instance variables */ 
 	private GRect brick;
@@ -259,6 +305,10 @@ public class Breakout extends GraphicsProgram {
 	private GObject gobj; /* The object being directed - paddle */
 	private GPoint last; /* The last mouse position */
 	private GObject collObj;
+	private GObject collObj1;
+	private GObject collObj2;
+	private GObject collObj3;
+	private GObject collObj4;
 	
 	private RandomGenerator rgen = 
 			RandomGenerator.getInstance();
