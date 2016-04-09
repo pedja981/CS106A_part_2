@@ -162,11 +162,15 @@ public class BreakoutVersionOne extends GraphicsProgram {
 	}
 	
 	public void mouseMoved(MouseEvent e) {
-		if (gobj != null) {
-			gobj.move(e.getX()-last.getX(), 0);
-			pause(PADDLE_DELAY);
-			// we now save the new position of the last
-			last = new GPoint(e.getPoint());
+		// first IF is to limit the paddle not to go off
+		// the boundaries of the world
+		if ((e.getX()>PADDLE_WIDTH/2) && (e.getX()<(WIDTH-PADDLE_WIDTH/2))){
+			if (gobj != null) {
+				gobj.move(e.getX()-last.getX(), 0);
+				pause(PADDLE_DELAY);
+				// we now save the new position of the last
+				last = new GPoint(e.getPoint());
+			}
 		}
 	} 
 		
@@ -192,14 +196,15 @@ public class BreakoutVersionOne extends GraphicsProgram {
 		vy = 3.0;
 	}
 	
-/*	public void keyTurned(KeyEvent e) {
+	public void keyTurned(KeyEvent e) {
+		playGame();
 		//if (ball != null) {
-		while (ball.getX() < WIDTH) {
+		/*while (ball.getX() < WIDTH) {
 			ball.move(vx, vy);
 			pause(BALL_DELAY);
-		}
+		}*/
 		//}
-	}*/
+	}
 	
 	private void moveBall() {
 		ball.move(vx, vy);
@@ -274,11 +279,11 @@ public class BreakoutVersionOne extends GraphicsProgram {
 		if ((collObj3 == paddle) && (collObj3 != null) && (vy>0)) {
 			vy = -vy;
 			if (((paddle.getX()+PADDLE_WIDTH)-ball.getX())<20 && 
-					((paddle.getX()+PADDLE_WIDTH)-ball.getX())>15) {
-				vx = 0.80*vx;
+					((paddle.getX()+PADDLE_WIDTH)-ball.getX())>10) {
+				vx = 1.20*vx;
 			}
-			if (((paddle.getX()+PADDLE_WIDTH)-ball.getX())<15 && vx<0) {
-				vx = - 1.05*vx;
+			if (((paddle.getX()+PADDLE_WIDTH)-ball.getX())<10 && vx<0) {
+				vx = - 0.80*vx;
 			}
 		}
 		
@@ -287,11 +292,11 @@ public class BreakoutVersionOne extends GraphicsProgram {
 			
 			
 			if (((ball.getX()+BALL_RADIUS)-paddle.getX())<20 && 
-					((ball.getX()+BALL_RADIUS)-paddle.getX())>15) {
-				vx = 0.80*vx;
+					((ball.getX()+BALL_RADIUS)-paddle.getX())>10) {
+				vx = 1.20*vx;
 			}
-			if (((ball.getX()+BALL_RADIUS)-paddle.getX())<15 && vx>0) {
-				vx = - 1.05*vx;
+			if (((ball.getX()+BALL_RADIUS)-paddle.getX())<10 && vx>0) {
+				vx = - 0.80*vx;
 			}
 		}
 		
