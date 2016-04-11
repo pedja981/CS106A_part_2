@@ -1,5 +1,5 @@
 /*
- * File: Breakout.java
+ * File: BreakoutTwo.java
  * -------------------
  * This file will eventually implement the game of Breakout.
  */
@@ -22,9 +22,10 @@
 		
  /*
   * Steps: setup the game
+  * play the game
+  * check for collisions - with paddle or bricks or wall
+  * check for condition to win the game
   */
-
-
 
 import java.awt.Color;
 import java.awt.event.*;
@@ -33,7 +34,7 @@ import acm.program.GraphicsProgram;
 import acm.util.RandomGenerator;
 import acm.graphics.*;
 
-public class BreakoutVersionOne extends GraphicsProgram {
+public class BreakoutTwo extends GraphicsProgram {
 
 	/** Width and height of application window in pixels */
 	public static final int APPLICATION_WIDTH = 400;
@@ -64,7 +65,7 @@ public class BreakoutVersionOne extends GraphicsProgram {
 	  (WIDTH - (NBRICKS_PER_ROW - 1) * BRICK_SEP) / NBRICKS_PER_ROW;
 
 	/** Height of a brick */
-	private static final int BRICK_HEIGHT = 8;
+	private static final int BRICK_HEIGHT = 10;
 
 	/** Radius of the ball in pixels */
 	private static final int BALL_RADIUS = 5;
@@ -151,7 +152,7 @@ public class BreakoutVersionOne extends GraphicsProgram {
 			 * of the mouse position. This also enables us better control over
 			 * "left-right border condition" which says that paddle must not go 
 			 * off the screen. If we try to control this condition using paddle position
-			 * as a parameter, we go into the problems. But if we use last.getX() as 
+			 * as a parameter, we go into the problems. But if we use e.getX() as 
 			 * that parameter, things are much simpler
 			 */
 			
@@ -173,7 +174,8 @@ public class BreakoutVersionOne extends GraphicsProgram {
 			}
 		}
 	} 
-		
+	
+	
 	/*
 	 * LET'S PLAY the Game!
 	 */
@@ -181,12 +183,17 @@ public class BreakoutVersionOne extends GraphicsProgram {
 		initializeBall();
 		while (true) {
 			moveBall();
+			if (gameOver()) {
+				remove(ball);
+				break;
+			}
 		}
 	}
 	
 	/*
 	 * Determine the initial movement of the ball. It is defined by
-	 * the velocity parameters vx and vy. vy is constant, vx varies
+	 * the velocity parameters vx and vy. vy is constant, vx varies,
+	 * that's what we use random generator for
 	 */
 	private void initializeBall() {
 		vx = rgen.nextDouble(1.0, 3.0);
@@ -240,29 +247,45 @@ public class BreakoutVersionOne extends GraphicsProgram {
 	    	  vy = -vy;
 	      }
 	 }
-		 
+
 	 private void collideWithBricks() {
+	 
+	 /* 4 points at the ball - when ball touches any object at one
+	  * of that points, object is registered as collObj1-4
+	  * We need this to simulate collisions artificially, but realistically */
 	 collObj1 = getElementAt(ball.getX(), ball.getY());
 	 collObj2 = getElementAt(ball.getX()+BALL_RADIUS*2, ball.getY());
 	 collObj3 = getElementAt(ball.getX(), ball.getY()+BALL_RADIUS*2);
 	 collObj4 = getElementAt(ball.getX()+BALL_RADIUS*2, ball.getY()+BALL_RADIUS*2);
-		if ((collObj1 != paddle) && (collObj1 != null) && (vy<0)) {
+	 
+	 /* Also, the game was too easy by default demands in handout.
+	  * Bricks were too easy to destroy due to easily achiavable
+	  * "breakout" effect...
+	  * I've made it more interesting with these conditions, in order
+	  * to make the game more like real version */
+	 	if ((collObj1 != paddle) && (collObj1 != null) && (vy<0)) {
 			remove(collObj1);
+			// value of counter increases with every brick hit
+			bricksDestroyed++;
+			// bounce of the ball
 			vy = -vy;
 		}
 		
 		if ((collObj2 != paddle) && (collObj2 != null) && (vy<0)) {
 			remove(collObj2);
+			bricksDestroyed++;
 			vy = -vy;
 		}
 		
 		if ((collObj3 != paddle) && (collObj3 != null)&& (vy>0)) {
 			remove(collObj3);
+			bricksDestroyed++;
 			vy = -vy;
 		}
 		
 		if ((collObj4 != paddle) && (collObj4 != null)&& (vy>0)) {
 			remove(collObj4);
+			bricksDestroyed++;
 			vy = -vy;
 		}
 	 }
@@ -276,6 +299,10 @@ public class BreakoutVersionOne extends GraphicsProgram {
 		collObj3 = getElementAt(ball.getX(), ball.getY()+BALL_RADIUS*2);
 		collObj4 = getElementAt(ball.getX()+BALL_RADIUS*2, ball.getY()+BALL_RADIUS*2);
 	
+		/* Special addition :-)
+		 * We add some fun into game - depending on which part of paddle 
+		 * the player hit the ball, ball behaves in different manner.
+		 * This increases dynamics of game and makes it more fun!  */
 		if ((collObj3 == paddle) && (collObj3 != null) && (vy>0)) {
 			vy = -vy;
 			if (((paddle.getX()+PADDLE_WIDTH)-ball.getX())<20 && 
@@ -301,7 +328,13 @@ public class BreakoutVersionOne extends GraphicsProgram {
 		}
 		
 	}
-	 		
+	
+	/* Method for decide when the player have won the game */
+	private boolean gameOver() {
+		// condition for win the game
+		return (bricksDestroyed == startNumberOfBricks);
+	} 
+	 
 	/* private instance variables */ 
 	private GRect brick;
 	private GRect paddle;
@@ -315,23 +348,14 @@ public class BreakoutVersionOne extends GraphicsProgram {
 	private GObject collObj3;
 	private GObject collObj4;
 	
+	private int startNumberOfBricks = 
+			NBRICKS_PER_ROW * NBRICK_ROWS; // number of brick - used for winning the game
+	private int bricksDestroyed = 0; // counter for checking the condition for
+									// winning the game - all brick destroyed
+	
+	/* random generator private instance variable - for
+	 * generating the direction of the ball at the beginning */
 	private RandomGenerator rgen = 
 			RandomGenerator.getInstance();
-
-/* Pokusaj za paddle */ 
-		/*public void mouseMoved(MouseEvent e) {
-			if (gobj != null) {
-				if (last.getX() < PADDLE_WIDTH/2) { gobj.setLocation(1, 
-					HEIGHT-PADDLE_Y_OFFSET-PADDLE_HEIGHT); 
-				last = new GPoint(e.getPoint());
-				gobj.move(e.getX()-last.getX(), 0);}	
-		
-			else if (last.getX() > PADDLE_WIDTH/2) {	gobj.move(e.getX()-last.getX(), 0);
-					pause(PADDLE_DELAY);
-					// we now save the new position of the last
-					last = new GPoint(e.getPoint());			
-				}
-			}
-		}*/
 
 }
